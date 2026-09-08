@@ -310,14 +310,14 @@ h1.headline{
 .link-btn:hover{ color:var(--ink); }
 .link-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
 .idea-form{ margin-top:18px; padding-top:18px; border-top:1px solid var(--line); max-width:440px; }
-.cta-field--dark span{ color:var(--ink-soft); }
-.cta-field--dark .cta-optional{ color:color-mix(in srgb, var(--ink-soft) 70%, transparent); }
-.cta-field--dark input, .cta-field--dark textarea{
+.idea-form .cta-field span{ color:var(--ink-soft); }
+.idea-form .cta-field .cta-optional{ color:color-mix(in srgb, var(--ink-soft) 70%, transparent); }
+.idea-form .cta-field input, .idea-form .cta-field textarea{
   font-family:'IBM Plex Sans', sans-serif; font-size:0.92rem;
   padding:11px 14px; border-radius:8px; border:1px solid var(--line);
   background:var(--paper-raised); color:var(--ink); resize:vertical;
 }
-.cta-field--dark input::placeholder, .cta-field--dark textarea::placeholder{ color:var(--ink-soft); }
+.idea-form .cta-field input::placeholder, .idea-form .cta-field textarea::placeholder{ color:var(--ink-soft); }
 .idea-status{ font-size:0.82rem; color:var(--ink-soft); margin-top:10px; min-height:1em; }
 .idea-status[data-state="error"]{ color:var(--wool); }
 .idea-status[data-state="ok"]{ color:var(--accent-deep); }
