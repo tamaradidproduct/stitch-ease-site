@@ -318,6 +318,9 @@ h1.headline{
   background:var(--paper-raised); color:var(--ink); resize:vertical;
 }
 .cta-field--dark input::placeholder, .cta-field--dark textarea::placeholder{ color:var(--ink-soft); }
+.idea-status{ font-size:0.82rem; color:var(--ink-soft); margin-top:10px; min-height:1em; }
+.idea-status[data-state="error"]{ color:var(--wool); }
+.idea-status[data-state="ok"]{ color:var(--accent-deep); }
 
 /* ---------- about ---------- */
 .about{ padding:0 0 88px; }
@@ -362,6 +365,8 @@ h1.headline{
 .cta-form input::placeholder{ color:color-mix(in srgb, var(--paper) 55%, transparent); }
 .cta-form .btn.primary{ background:var(--accent); border-color:var(--accent); flex-shrink:0; }
 .cta-fine{ font-size:0.78rem; color:color-mix(in srgb, var(--paper) 55%, transparent); }
+.cta-fine[data-state="error"]{ color:var(--wool); }
+.cta-fine[data-state="ok"]{ color:var(--accent); }
 .cta-radios{
   border:none; padding:0; margin:0 0 16px;
   display:flex; flex-direction:column; gap:8px; text-align:left;
@@ -529,30 +534,31 @@ footer{ border-top:1px solid var(--line); padding:32px 0 48px; }
       <div class="cta-fields">
         <label class="cta-field cta-field--dark">
           <span>Your idea</span>
-          <textarea rows="3" placeholder="What should Stitch Ease do next?" required></textarea>
+          <textarea id="ideaText" rows="3" placeholder="What should Stitch Ease do next?" required></textarea>
         </label>
         <label class="cta-field cta-field--dark">
           <span>Your name</span>
-          <input type="text" placeholder="Full name" required>
+          <input id="ideaName" type="text" placeholder="Full name" required>
         </label>
         <label class="cta-field cta-field--dark">
           <span>Email</span>
-          <input type="email" placeholder="you@studio.com" required>
+          <input id="ideaEmail" type="email" placeholder="you@studio.com" required>
         </label>
         <label class="cta-field cta-field--dark">
           <span>Charts you design, roughly per month</span>
-          <input type="text" placeholder="e.g. 2–3">
+          <input id="ideaCharts" type="text" placeholder="e.g. 2–3">
         </label>
         <label class="cta-field cta-field--dark">
           <span>Website, Ravelry, or social link <em class="cta-optional">(optional)</em></span>
-          <input type="text" placeholder="ravelry.com/designers/…">
+          <input id="ideaLink" type="text" placeholder="ravelry.com/designers/…">
         </label>
         <label class="cta-field cta-field--dark">
           <span>What do you use to chart today? <em class="cta-optional">(optional)</em></span>
-          <input type="text" placeholder="e.g. Stitchmastery, pen and paper">
+          <input id="ideaTool" type="text" placeholder="e.g. Stitchmastery, pen and paper">
         </label>
       </div>
       <button type="submit" class="btn primary" style="width:100%; justify-content:center;">Send idea</button>
+      <p class="idea-status" id="ideaStatus"></p>
     </form>
   </div>
 
@@ -590,7 +596,7 @@ footer{ border-top:1px solid var(--line); padding:32px 0 48px; }
             <span>I don't mind marketing emails, send me those too</span>
           </label>
         </fieldset>
-        <p class="cta-fine">One email to start. No spam. And honestly — there's no marketing pipeline right now. This is a passion project; we're not actively promoting anything yet.</p>
+        <p class="cta-fine" id="s1Status">One email to start. No spam. And honestly — there's no marketing pipeline right now. This is a passion project; we're not actively promoting anything yet.</p>
       </form>
 
       <form id="step2" class="cta-step" hidden>
@@ -599,23 +605,23 @@ footer{ border-top:1px solid var(--line); padding:32px 0 48px; }
         <div class="cta-fields">
           <label class="cta-field">
             <span>Your name</span>
-            <input type="text" placeholder="Full name" required>
+            <input id="s2Name" type="text" placeholder="Full name" required>
           </label>
           <label class="cta-field">
             <span>Charts you design, roughly per month</span>
-            <input type="text" placeholder="e.g. 2–3" required>
+            <input id="s2Charts" type="text" placeholder="e.g. 2–3" required>
           </label>
           <label class="cta-field">
             <span>Website, Ravelry, or social link <em class="cta-optional">(optional)</em></span>
-            <input type="text" placeholder="ravelry.com/designers/…">
+            <input id="s2Link" type="text" placeholder="ravelry.com/designers/…">
           </label>
           <label class="cta-field">
             <span>What do you use to chart today? <em class="cta-optional">(optional)</em></span>
-            <input type="text" placeholder="e.g. Stitchmastery, pen and paper">
+            <input id="s2Tool" type="text" placeholder="e.g. Stitchmastery, pen and paper">
           </label>
         </div>
         <button type="submit" class="btn primary" style="width:100%; justify-content:center;">Submit</button>
-        <p class="cta-fine">This is what we use to prioritize invites — not required to stay signed up.</p>
+        <p class="cta-fine" id="s2Status">This is what we use to prioritize invites — not required to stay signed up.</p>
       </form>
     </div>
   </div>
@@ -639,27 +645,116 @@ footer{ border-top:1px solid var(--line); padding:32px 0 48px; }
 
 <script>
 (function(){
+  var SUPABASE_URL = 'https://pfoxdauroxzkwrcmgoym.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmb3hkYXVyb3h6a3dyY21nb3ltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgyMDI1NjQsImV4cCI6MjEwMzc3ODU2NH0.0MJVmacc2y58PGq2rsW-5gwmZGzv5jUXac9XPR4W4nM';
+
+  function insertRow(table, row) {
+    return fetch(SUPABASE_URL + '/rest/v1/' + table, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify(row),
+    }).then(function(res){
+      if (!res.ok) throw new Error('Request failed (' + res.status + ')');
+    });
+  }
+
+  window.__stitchEaseInsertRow = insertRow; // exposed for the two form handlers below
+})();
+
+(function(){
   var step1 = document.getElementById('step1');
   var step2 = document.getElementById('step2');
   var echo = document.getElementById('ctaEmailEcho');
+  var s1Status = document.getElementById('s1Status');
+  var s2Status = document.getElementById('s2Status');
+  var s1DefaultText = s1Status.textContent;
+  var s2DefaultText = s2Status.textContent;
+  var currentEmail = '';
+
   step1.addEventListener('submit', function(e){
     e.preventDefault();
     var email = document.getElementById('ctaEmail').value.trim();
-    echo.textContent = email || 'your email';
-    step1.hidden = true;
-    step2.hidden = false;
+    var pref = (document.querySelector('input[name="emailPref"]:checked') || {}).value || 'launch-only';
+    var submitBtn = step1.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    s1Status.textContent = 'Saving…';
+    s1Status.removeAttribute('data-state');
+
+    window.__stitchEaseInsertRow('signups', { email: email, email_pref: pref }).then(function(){
+      currentEmail = email;
+      echo.textContent = email || 'your email';
+      step1.hidden = true;
+      step2.hidden = false;
+    }).catch(function(){
+      s1Status.textContent = 'Something went wrong saving that — mind trying again?';
+      s1Status.setAttribute('data-state', 'error');
+    }).finally(function(){
+      submitBtn.disabled = false;
+      if (!step2.hidden) { s1Status.textContent = s1DefaultText; s1Status.removeAttribute('data-state'); }
+    });
   });
-  step2.addEventListener('submit', function(e){ e.preventDefault(); });
+
+  step2.addEventListener('submit', function(e){
+    e.preventDefault();
+    var submitBtn = step2.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    s2Status.textContent = 'Saving…';
+    s2Status.removeAttribute('data-state');
+
+    window.__stitchEaseInsertRow('signup_details', {
+      email: currentEmail,
+      name: document.getElementById('s2Name').value.trim(),
+      charts_per_month: document.getElementById('s2Charts').value.trim(),
+      link: document.getElementById('s2Link').value.trim(),
+      current_tool: document.getElementById('s2Tool').value.trim(),
+    }).then(function(){
+      step2.innerHTML = '<h2>You\'re in the queue</h2><p>Thanks — we\'ll be in touch as soon as there\'s room. In the meantime, feel free to poke around the app once you get your invite.</p>';
+    }).catch(function(){
+      s2Status.textContent = 'Something went wrong saving that — mind trying again?';
+      s2Status.setAttribute('data-state', 'error');
+      submitBtn.disabled = false;
+    });
+  });
 })();
 
 (function(){
   var toggle = document.getElementById('ideaToggle');
   var form = document.getElementById('ideaForm');
+  var status = document.getElementById('ideaStatus');
   toggle.addEventListener('click', function(){
     form.hidden = !form.hidden;
     toggle.textContent = form.hidden ? 'Let us know' : 'Hide the form';
   });
-  form.addEventListener('submit', function(e){ e.preventDefault(); });
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    status.textContent = 'Sending…';
+    status.removeAttribute('data-state');
+
+    window.__stitchEaseInsertRow('feature_ideas', {
+      idea: document.getElementById('ideaText').value.trim(),
+      name: document.getElementById('ideaName').value.trim(),
+      email: document.getElementById('ideaEmail').value.trim(),
+      charts_per_month: document.getElementById('ideaCharts').value.trim(),
+      link: document.getElementById('ideaLink').value.trim(),
+      current_tool: document.getElementById('ideaTool').value.trim(),
+    }).then(function(){
+      form.reset();
+      status.textContent = 'Thanks — got it.';
+      status.setAttribute('data-state', 'ok');
+      submitBtn.disabled = false;
+    }).catch(function(){
+      status.textContent = 'Something went wrong sending that — mind trying again?';
+      status.setAttribute('data-state', 'error');
+      submitBtn.disabled = false;
+    });
+  });
 })();
 </script>
 
