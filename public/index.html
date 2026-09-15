@@ -1,9 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Stitch Ease</title>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -11,6 +8,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-KFSV945R');</script>
 <!-- End Google Tag Manager -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stitch Ease</title>
 <meta name="description" content="A modern, browser-based chart editor for knitwear designers.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,380;0,9..144,560;0,9..144,650;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -421,8 +421,6 @@ footer{ border-top:1px solid var(--line); padding:32px 0 48px; }
 </style>
 </head>
 <body>
-
-
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KFSV945R"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -702,8 +700,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       echo.textContent = email || 'your email';
       step1.hidden = true;
       step2.hidden = false;
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ event: 'sign_up_conversion', value: 1.0, currency: 'USD' });
     }).catch(function(){
       s1Status.textContent = 'Something went wrong saving that — mind trying again?';
       s1Status.setAttribute('data-state', 'error');
